@@ -26,7 +26,7 @@ app.listen(port, () => {
     console.log('Server running on port', port);
 });
 
-//Example ROute: Get all cards
+//Example Route: Get all cards
 app.get('/allcards', async (req, res) => {
     try {
         let connection = await mysql.createConnection(dbConfig);
@@ -48,5 +48,17 @@ app.post('/addcard', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({message: 'Server error - could not add card'+card_name })
+    }
+})
+
+//Lesson 16
+app.get('/allmangas',async (req,res) => {
+    try {
+        let connection2 = await mysql.createconnection(dbconfig);
+        const [rows] = await connection2.execute('SELECT * FROM defaultdb.manga');
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({message: 'Server error - could not view manga'})
     }
 })
