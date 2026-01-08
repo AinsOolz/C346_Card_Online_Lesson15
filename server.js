@@ -54,11 +54,23 @@ app.post('/addcard', async (req, res) => {
 //Lesson 16
 app.get('/allmangas',async (req,res) => {
     try {
-        let connection2 = await mysql.createconnection(dbconfig);
-        const [rows] = await connection2.execute('SELECT * FROM defaultdb.manga');
+        let connection = await mysql.createConnection(dbConfig);
+        const [rows] = await connection.execute('SELECT * FROM defaultdb.manga');
         res.json(rows);
     } catch (err) {
         console.error(err);
         res.status(500).json({message: 'Server error - could not view manga'})
+    }
+})
+
+app.post('/addmangas', async (req,res) => {
+    const {manga_name, manga_author, manga_status} = req.body;
+    try {
+        let connection = await mysql.createConnection(dbConfig)
+        await connection.execute('INSERT INTO manga (manga_name, manga_author, manga_status) VALUES (?, ?, ?)', [manga_name, manga_author, manga_status]);
+        res.status(201).json({message: 'Manga '+manga_name+' added'})
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({message: 'Server error - could not add manga '+manga_name})
     }
 })
