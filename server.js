@@ -51,6 +51,8 @@ app.post('/addcard', async (req, res) => {
     }
 })
 
+
+
 //Lesson 16
 app.get('/allmangas',async (req,res) => {
     try {
@@ -74,3 +76,35 @@ app.post('/addmangas', async (req,res) => {
         res.status(500).json({message: 'Server error - could not add manga '+manga_name})
     }
 })
+
+app.put('/updatemanga/:id', async (req, res) => {
+    const mangaId = req.params.id;
+    const { manga_name, manga_author, manga_status } = req.body;
+
+    try {
+        let connection = await mysql.createConnection(dbConfig);
+        await connection.execute('UPDATE manga SET manga_name = ?, manga_author = ?, manga_status = ? WHERE idmanga = ?', [manga_name, manga_author, manga_status, mangaId]
+        );
+
+        res.json({ message: 'Manga updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error - could not update manga' });
+    }
+});
+
+// Delete manga by ID
+app.delete('/deletemanga/:id', async (req, res) => {
+    const mangaId = req.params.id;
+
+    try {
+        let connection = await mysql.createConnection(dbConfig);
+        await connection.execute('DELETE FROM manga WHERE idmanga = ?', [mangaId]
+        );
+
+        res.json({ message: 'Manga deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error - could not delete manga' });
+    }
+});
