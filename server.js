@@ -12,7 +12,7 @@ const dbConfig = {
     database: process.env.DB_NAME,
     port: process.env.DB_PORT,
     waitForConnections: true,
-    connectionLimit: 100,
+    connectionLimit: 50,
     queueLimit: 0,
 };
 
@@ -20,6 +20,8 @@ const dbConfig = {
 const app = express();
 //allow app read Json
 app.use(express.json());
+
+const pool = mysql.createPool(dbConfig);
 
 //Server Start
 app.listen(port, () => {
@@ -29,8 +31,7 @@ app.listen(port, () => {
 //Example Route: Get all cards
 app.get('/allcards', async (req, res) => {
     try {
-        let connection = await mysql.createConnection(dbConfig);
-        const [rows] = await connection.execute('SELECT * FROM defaultdb.cards');
+        const [rows] = await pool.execute('SELECT * FROM cards');
         res.json(rows);
     } catch (err) {
         console.error(err);
@@ -40,23 +41,23 @@ app.get('/allcards', async (req, res) => {
 
 // Example Route: Create new card
 app.post('/addcard', async (req, res) => {
-    const {card_name, card_image} = req.body;
-    try{
-        let connection = await mysql.createConnection(dbConfig);
-        await connection.execute('INSERT INTO defaultdb.cards (card_name, card_image) VALUES (?, ?)',[card_name, card_image]);
-        res.status(201).json({message: 'Card '+card_name+' added successfully'})
+    const { card_name, card_image } = req.body;
+
+    try {
+        await pool.execute('INSERT INTO cards (card_name, card_image) VALUES (?, ?)', [card_name, card_image]);
+        res.status(201).json({message: 'Card ' + card_name + ' added successfully'});
     } catch (err) {
         console.error(err);
-        res.status(500).json({message: 'Server error - could not add card'+card_name })
+        res.status(500).json({message: 'Server error - could not add card ' + card_name});
     }
-})
+});
+
 
 // Example Route: Delete Card
 app.delete('/deletecard/:id', async (req,res) => {
     const {id} = req.params;
     try {
-        let connection = await mysql.createConnection(dbConfig)
-        await connection.execute('DELETE FROM cards WHERE id ='+id);
+        await pool.execute('DELETE FROM cards WHERE id ='+id);
         res.status(201).json({message: 'Card '+id+' deleted successfully'})
     } catch (err) {
         console.error(err);
@@ -69,8 +70,7 @@ app.put('/updatecard/:id', async (req,res) => {
     const { id } = req.params
     const {card_name, card_image} = req.body;
     try {
-        let connection = await mysql.createConnection(dbConfig)
-        await connection.execute('UPDATE cards SET card_name=?, card_image=? WHERE id=?',[card_name, card_image, id]);
+        await pool.execute('UPDATE cards SET card_name=?, card_image=? WHERE id=?',[card_name, card_image, id]);
         res.status(201).json({ message: 'Card '+card_name+' updated successfully'})
     } catch (err) {
         console.error(err);
