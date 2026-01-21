@@ -74,9 +74,12 @@ app.put('/updatecard/:id', async (req,res) => {
         res.status(201).json({ message: 'Card '+card_name+' updated successfully'})
     } catch (err) {
         console.error(err);
-        res.status(500).json({messae: 'Server error - could not update card '+card_name})
+        res.status(500).json({message: 'Server error - could not update card '+card_name})
     }
 })
+
+
+
 
 
 //Lesson 16
