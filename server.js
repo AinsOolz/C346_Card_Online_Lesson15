@@ -4,7 +4,7 @@ const mysql = require('mysql2/promise');
 require('dotenv').config();
 const port = 3000;
 
-app.use(express.json());
+// app.use(express.json());
 
 //database config info
 const dbConfig = {
