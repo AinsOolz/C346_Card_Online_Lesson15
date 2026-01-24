@@ -34,24 +34,25 @@ app.listen(port, () => {
 const cors = require("cors");
 
 const allowedOrigins = [
-  "http://localhost:3000",
-  "https://c346-card-online-lesson15.onrender.com",]
+    "http://localhost:3000",
+    "https://c346-card-online-lesson15.onrender.com",
+    "https://card-app-starter-one.vercel.app/"]
 
 app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (Postman/server-to-server)
-      if (!origin) return callback(null, true);
+    cors({
+        origin: function (origin, callback) {
+            // allow requests with no origin (Postman/server-to-server)
+            if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: false,
-  })
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
+            return callback(new Error("Not allowed by CORS"));
+        },
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: false,
+    })
 );
 
 
@@ -62,7 +63,7 @@ app.get('/allcards', async (req, res) => {
         res.json(rows);
     } catch (err) {
         console.error(err);
-        res.status(500).json({message: 'Server error for allcards'})
+        res.status(500).json({ message: 'Server error for allcards' })
     }
 });
 
@@ -72,36 +73,36 @@ app.post('/addcard', async (req, res) => {
 
     try {
         await pool.execute('INSERT INTO cards (card_name, card_image) VALUES (?, ?)', [card_name, card_image]);
-        res.status(201).json({message: 'Card ' + card_name + ' added successfully'});
+        res.status(201).json({ message: 'Card ' + card_name + ' added successfully' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({message: 'Server error - could not add card ' + card_name});
+        res.status(500).json({ message: 'Server error - could not add card ' + card_name });
     }
 });
 
 
 // Example Route: Delete Card
-app.delete('/deletecard/:id', async (req,res) => {
-    const {id} = req.params;
+app.delete('/deletecard/:id', async (req, res) => {
+    const { id } = req.params;
     try {
-        await pool.execute('DELETE FROM cards WHERE id ='+id);
-        res.status(201).json({message: 'Card '+id+' deleted successfully'})
+        await pool.execute('DELETE FROM cards WHERE id =' + id);
+        res.status(201).json({ message: 'Card ' + id + ' deleted successfully' })
     } catch (err) {
         console.error(err);
-        res.status(500).json({message: 'Server error - could not delete card '+id})
+        res.status(500).json({ message: 'Server error - could not delete card ' + id })
     }
 })
 
 // Example Route:
-app.put('/updatecard/:id', async (req,res) => {
+app.put('/updatecard/:id', async (req, res) => {
     const { id } = req.params
-    const {card_name, card_image} = req.body;
+    const { card_name, card_image } = req.body;
     try {
-        await pool.execute('UPDATE cards SET card_name=?, card_image=? WHERE id=?',[card_name, card_image, id]);
-        res.status(201).json({ message: 'Card '+card_name+' updated successfully'})
+        await pool.execute('UPDATE cards SET card_name=?, card_image=? WHERE id=?', [card_name, card_image, id]);
+        res.status(201).json({ message: 'Card ' + card_name + ' updated successfully' })
     } catch (err) {
         console.error(err);
-        res.status(500).json({message: 'Server error - could not update card '+card_name})
+        res.status(500).json({ message: 'Server error - could not update card ' + card_name })
     }
 })
 
