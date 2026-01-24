@@ -1,5 +1,6 @@
 // include required packages
 const express = require('express');
+const cors = require("cors");
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 const port = 3000;
@@ -31,12 +32,10 @@ app.listen(port, () => {
 });
 
 
-const cors = require("cors");
-
 const allowedOrigins = [
     "http://localhost:3000",
     "https://c346-card-online-lesson15.onrender.com",
-    "https://card-app-starter-one.vercel.app/"]
+    "https://card-app-starter-os64.onrender.com"]
 
 app.use(
     cors({
